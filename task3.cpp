@@ -1,0 +1,75 @@
+#include <iostream>
+#include <sstream>
+#include <cctype>
+#include <vector>
+using namespace std;
+
+// Function to check keyword
+bool isKeyword(string s) {
+    string keywords[] = {"int", "float", "double", "char", "if", "else", "for", "while", "return"};
+    for (string k : keywords)
+        if (s == k) return true;
+    return false;
+}
+
+// Function to check operator
+bool isOperator(char c) {
+    string ops = "+-*/=%<>";
+    return ops.find(c) != string::npos;
+}
+
+// Function to check identifier
+bool isIdentifier(string s) {
+    if (!isalpha(s[0]) && s[0] != '_') return false;
+    for (char c : s)
+        if (!isalnum(c) && c != '_') return false;
+    return true;
+}
+
+int main() {
+    string input;
+    cout << "Enter a line of code: ";
+    getline(cin, input);
+
+    string token = "";
+
+    for (int i = 0; i < input.length(); i++) {
+        char ch = input[i];
+
+        // Operator check
+        if (isOperator(ch)) {
+            if (!token.empty()) {
+                if (isKeyword(token))
+                    cout << token << " : Keyword\n";
+                else if (isIdentifier(token))
+                    cout << token << " : Identifier\n";
+                token = "";
+            }
+            cout << ch << " : Operator\n";
+        }
+        // Space or separator
+        else if (isspace(ch) || ch == ';' || ch == ',' || ch == '(' || ch == ')') {
+            if (!token.empty()) {
+                if (isKeyword(token))
+                    cout << token << " : Keyword\n";
+                else if (isIdentifier(token))
+                    cout << token << " : Identifier\n";
+                token = "";
+            }
+        }
+        // Build token
+        else {
+            token += ch;
+        }
+    }
+
+    // Last token
+    if (!token.empty()) {
+        if (isKeyword(token))
+            cout << token << " : Keyword\n";
+        else if (isIdentifier(token))
+            cout << token << " : Identifier\n";
+    }
+
+    return 0;
+}
